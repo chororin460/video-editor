@@ -1,11 +1,16 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import "./App.css";
 
 function App() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>("");
+  const [fileName, setFileName] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   async function openVideo() {
     const selected = await open({
@@ -23,10 +28,39 @@ function App() {
       return;
     }
 
-    const path = selected;
+    setVideoUrl(convertFileSrc(selected));
+    setFileName(selected.split("/").pop() ?? selected);
 
-    setVideoUrl(convertFileSrc(path));
-    setFileName(path.split("/").pop() ?? path);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+  }
+
+  async function togglePlayback() {
+    const video = videoRef.current;
+
+    if (!video) {
+      return;
+    }
+
+    if (video.paused) {
+      await video.play();
+    } else {
+      video.pause();
+    }
+  }
+
+  function formatTime(seconds: number) {
+    if (!Number.isFinite(seconds)) {
+      return "00:00";
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+      .toString()
+      .padStart(2, "0")}`;
   }
 
   return (
@@ -42,15 +76,37 @@ function App() {
       <section className="preview">
         {videoUrl ? (
           <video
+            ref={videoRef}
             className="video"
             src={videoUrl}
-            controls
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            onEnded={() => setIsPlaying(false)}
+            onTimeUpdate={(event) => {
+              setCurrentTime(event.currentTarget.currentTime);
+            }}
+            onLoadedMetadata={(event) => {
+              setDuration(event.currentTarget.duration);
+            }}
           />
         ) : (
           <div className="empty">
             動画を開いてください
           </div>
         )}
+      </section>
+
+      <section className="controls">
+        <button
+          onClick={togglePlayback}
+          disabled={!videoUrl}
+        >
+          {isPlaying ? "⏸ 一時停止" : "▶ 再生"}
+        </button>
+
+        <span className="time">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </span>
       </section>
 
       <footer className="status">
