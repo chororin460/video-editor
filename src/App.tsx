@@ -103,7 +103,29 @@ function App() {
         >
           {isPlaying ? "⏸ 一時停止" : "▶ 再生"}
         </button>
-
+      
+        <input
+          className="seek"
+          type="range"
+          min="0"
+          max={duration || 0}
+          step="0.01"
+          value={currentTime}
+          disabled={!videoUrl}
+          onChange={(event) => {
+            const video = videoRef.current;
+      
+            if (!video) {
+              return;
+            }
+      
+            const newTime = Number(event.currentTarget.value);
+      
+            video.currentTime = newTime;
+            setCurrentTime(newTime);
+          }}
+        />
+      
         <span className="time">
           {formatTime(currentTime)} / {formatTime(duration)}
         </span>

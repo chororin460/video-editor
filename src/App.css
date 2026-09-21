@@ -141,38 +141,13 @@ button {
   text-overflow: ellipsis;
 }
 
-.controls {
-  height: 56px;
-
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  padding: 0 16px;
-
-  background: #202020;
-  border-top: 1px solid #333333;
-}
-
-.controls button {
-  padding: 7px 14px;
-
-  border: none;
-  border-radius: 6px;
-
-  background: #ffffff;
-  color: #111111;
-
+.seek {
+  flex: 1;
+  min-width: 0;
   cursor: pointer;
 }
 
-.controls button:disabled {
+.seek:disabled {
   opacity: 0.4;
   cursor: default;
-}
-
-.time {
-  font-size: 14px;
-  font-variant-numeric: tabular-nums;
-  color: #dddddd;
 }
