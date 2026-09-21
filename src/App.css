@@ -151,3 +151,35 @@ button {
   opacity: 0.4;
   cursor: default;
 }
+
+.trim-controls {
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 0 16px;
+
+  background: #1b1b1b;
+  border-top: 1px solid #333333;
+
+  font-size: 13px;
+}
+
+.trim-controls button {
+  padding: 6px 12px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #444444;
+  color: #ffffff;
+
+  cursor: pointer;
+}
+
+.trim-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

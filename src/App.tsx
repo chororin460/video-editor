@@ -11,6 +11,8 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
 
   async function openVideo() {
     const selected = await open({
@@ -34,6 +36,8 @@ function App() {
     setIsPlaying(false);
     setCurrentTime(0);
     setDuration(0);
+    setStartTime(0);
+    setEndTime(0);
   }
 
   async function togglePlayback() {
@@ -86,7 +90,10 @@ function App() {
               setCurrentTime(event.currentTarget.currentTime);
             }}
             onLoadedMetadata={(event) => {
-              setDuration(event.currentTarget.duration);
+              const videoDuration = event.currentTarget.duration;
+
+              setDuration(videoDuration);
+              setEndTime(videoDuration);
             }}
           />
         ) : (
@@ -103,7 +110,7 @@ function App() {
         >
           {isPlaying ? "⏸ 一時停止" : "▶ 再生"}
         </button>
-      
+
         <input
           className="seek"
           type="range"
@@ -114,20 +121,48 @@ function App() {
           disabled={!videoUrl}
           onChange={(event) => {
             const video = videoRef.current;
-      
+
             if (!video) {
               return;
             }
-      
+
             const newTime = Number(event.currentTarget.value);
-      
+
             video.currentTime = newTime;
             setCurrentTime(newTime);
           }}
         />
-      
+
         <span className="time">
           {formatTime(currentTime)} / {formatTime(duration)}
+        </span>
+      </section>
+
+      <section className="trim-controls">
+        <button
+          disabled={!videoUrl}
+          onClick={() => setStartTime(currentTime)}
+        >
+          IN
+        </button>
+
+        <span>
+          開始: {formatTime(startTime)}
+        </span>
+
+        <button
+          disabled={!videoUrl}
+          onClick={() => setEndTime(currentTime)}
+        >
+          OUT
+        </button>
+
+        <span>
+          終了: {formatTime(endTime)}
+        </span>
+
+        <span>
+          長さ: {formatTime(Math.max(0, endTime - startTime))}
         </span>
       </section>
 
