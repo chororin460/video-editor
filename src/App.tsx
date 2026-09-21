@@ -141,7 +141,15 @@ function App() {
       <section className="trim-controls">
         <button
           disabled={!videoUrl}
-          onClick={() => setStartTime(currentTime)}
+          onClick={() => {
+            const newStart = currentTime;
+          
+            setStartTime(newStart);
+          
+            if (newStart > endTime) {
+              setEndTime(newStart);
+            }
+          }}
         >
           IN
         </button>
@@ -152,7 +160,15 @@ function App() {
 
         <button
           disabled={!videoUrl}
-          onClick={() => setEndTime(currentTime)}
+          onClick={() => {
+            const newEnd = currentTime;
+          
+            setEndTime(newEnd);
+          
+            if (newEnd < startTime) {
+              setStartTime(newEnd);
+            }
+          }}
         >
           OUT
         </button>
